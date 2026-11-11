@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pocketverse.invalid/schemas/meta-v1.json",
+  "title": "Pocketverse game folder meta.json, schema version 1",
+  "type": "object",
+  "required": ["schemaVersion", "id", "title", "platform", "engine", "launch", "hash", "import"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "id": { "type": "string", "pattern": "^[0-9a-f]{8}([0-9a-f]{4})?$" },
+    "title": { "type": "string", "minLength": 1 },
+    "platform": { "type": "string", "enum": ["gba", "nds", "rpgmaker", "renpy", "rpgmaker-mv"] },
+    "engine": {
+      "type": "object",
+      "required": ["id"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "variant": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "launch": {
+      "type": "object",
+      "required": ["file"],
+      "properties": { "file": { "$ref": "#/$defs/relativePath" } },
+      "additionalProperties": true
+    },
+    "hash": {
+      "type": "object",
+      "required": ["sha256", "method"],
+      "properties": {
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "method": { "type": "string", "enum": ["rom", "manifest"] },
+        "crc32": { "type": "string", "pattern": "^[0-9A-F]{8}$" }
+      },
+      "additionalProperties": true
+    },
+    "rom": {
+      "type": "object",
+      "required": ["gameCode", "headerTitle", "sizeBytes"],
+      "properties": {
+        "gameCode": { "type": "string", "pattern": "^[A-Z0-9]{4}$" },
+        "makerCode": { "type": "string" },
+        "headerTitle": { "type": "string" },
+        "region": { "type": "string" },
+        "sizeBytes": { "type": "integer", "minimum": 1 },
+        "unitCode": { "type": "integer", "minimum": 0 },
+        "dsiEnhanced": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    },
+    "import": {
+      "type": "object",
+      "required": ["importedAt", "originalName", "sourceKind", "appVersion"],
+      "properties": {
+        "importedAt": { "type": "string", "format": "date-time" },
+        "originalName": { "type": "string" },
+        "sourceKind": { "type": "string", "enum": ["file", "folder", "archive", "package"] },
+        "appVersion": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "ui": {
+      "type": "object",
+      "properties": {
+        "mode": { "type": "string", "enum": ["gba", "nds", "pc", "default"] },
+        "orientation": { "type": "string", "enum": ["auto", "portrait", "landscape"] }
+      },
+      "additionalProperties": true
+    },
+    "settings": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "minProperties": 1,
+        "maxProperties": 1,
+        "properties": {
+          "boolean": { "type": "boolean" },
+          "string": { "type": "string" },
+          "number": { "type": "number" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "controls": {
+      "type": "object",
+      "properties": {
+        "layouts": { "type": "object", "additionalProperties": { "type": "string" } }
+      },
+      "additionalProperties": true
+    },
+    "stats": {
+      "type": "object",
+      "properties": {
+        "playTimeSeconds": { "type": "integer", "minimum": 0 },
+        "lastPlayedAt": { "type": "string", "format": "date-time" },
+        "launchCount": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": true
+    },
+    "art": {
+      "type": "object",
+      "properties": { "cover": { "$ref": "#/$defs/relativePath" } },
+      "additionalProperties": true
+    },
+    "x": { "type": "object" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "platform": { "enum": ["gba", "nds"] } }, "required": ["platform"] },
+      "then": { "required": ["rom"] }
+    }
+  ],
+  "additionalProperties": true,
+  "$defs": {
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?![A-Za-z]:)(?!.*(^|/)\\.\\.(/|$))[^\\\\]+$"
+    }
+  }
+}

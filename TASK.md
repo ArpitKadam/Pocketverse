@@ -13,7 +13,7 @@ Phase: 1 (skeleton, storage, library DB). Phase 0 closed on 2026-11-12. Decision
 | 6 | RE note: JoiPlay Ren'Py plugin | done, committed |
 | 7 | RE note: JoiPlay RPG Maker plugin (+ Ruffle runtime observation) | done, committed |
 | 8 | `SYNTHESIS.md`, `CHEAT_FORMATS.md`, `UI_SPEC_GBA/NDS/PC.md`, module map revision, exit checklist | done, committed |
-| 9 | Phase 0 follow-ups: owner answers applied (module map into CLAUDE.md, GPL-3.0-only, NDS control placement, PC scope, landscape captures) | done, awaiting review |
+| 9 | Phase 0 follow-ups: owner answers applied (module map into CLAUDE.md, GPL-3.0-only, NDS control placement, PC scope, landscape captures) | done, committed |
 
 ## Task 1 acceptance
 
@@ -39,7 +39,7 @@ Do not start Phase 1 until the Phase 0 exit checklist (CLAUDE.md §5.3) is revie
 
 | # | Task | Status |
 | --- | --- | --- |
-| P1-1 | `docs/architecture/STORAGE.md` decision, `meta.json` v1 schema, folder layout spec | todo |
+| P1-1 | `docs/architecture/STORAGE.md` decision, `meta.json` v1 schema, folder layout spec | done, awaiting review |
 | P1-2 | Gradle multi-module skeleton (all modules from CLAUDE.md section 6, empty with READMEs), version catalog, builds, `ARCHITECTURE.md`, SPDX header check | todo |
 | P1-3 | `core-model`, `core-common`, `core-storage`: `GameFolder` API, folder creation, `meta.json` read/write, unit tests | todo |
 | P1-4 | `core-database`: Room library index, rebuild from folders, tests | todo |
