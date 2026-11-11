@@ -5,8 +5,8 @@ Phase: 0 (research and RE). Decision log: app licence = GPLv3 open source. No EX
 
 | # | Task | Status |
 | --- | --- | --- |
-| 1 | Skeleton, `.gitignore`, `TASK.md`, `TOOLING.md`, read-only adb inventory | done, awaiting review |
-| 2 | Open-source alternatives matrix, licence compatibility matrix, `docs/licenses/DECISION.md` | todo |
+| 1 | Skeleton, `.gitignore`, `TASK.md`, `TOOLING.md`, read-only adb inventory | done, committed |
+| 2 | Open-source alternatives matrix, licence compatibility matrix, `docs/licenses/DECISION.md` | done, awaiting review |
 | 3 | RE note + UI capture: John GBA Lite | todo |
 | 4 | RE note + UI capture: MelonDS (upstream source first) | todo |
 | 5 | RE note + UI capture: JoiPlay main | todo |
@@ -15,6 +15,7 @@ Phase: 0 (research and RE). Decision log: app licence = GPLv3 open source. No EX
 | 8 | `SYNTHESIS.md`, `CHEAT_FORMATS.md`, `UI_SPEC_GBA/NDS/PC.md`, module map revision, exit checklist | todo |
 
 ## Task 1 acceptance
+
 - [x] Folder skeleton under `docs/`, `research/`, `.re-workspace/`, `tools/`
 - [x] `.gitignore` covers `DemoGames`, `research/`, `.re-workspace/`
 - [x] Phone authorized, five packages found, versions recorded
