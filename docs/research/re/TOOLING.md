@@ -6,11 +6,25 @@ Status: Task 1 (2026-11-12). Read-only observation only.
 
 | Tool | Source | Used for |
 | --- | --- | --- |
-| REA MCP (`mcp__rea__*`) | MCP server `rea`, reconnected via `/mcp` | adb device/package/logcat/file pull, APK decode (apktool/JEB-style), Android class/method search, strings, native binary analysis (Rizin/Ghidra-class), Frida |
+| REA MCP (`mcp__rea__*`) | MCP server `rea`, reconnected via `/mcp` | advertised: adb, APK decode, class/method search, native analysis, Frida. Only adb works here (see gaps below) |
 | adb 37.0.1 | `C:\platform-tools\adb.exe` | fallback for anything REA does not wrap |
 | Claude-in-Chrome, Playwright | plugins | fetching upstream repos/docs for research |
 
-Not verified yet: JEB / apktool / Frida availability behind REA. Check with `inspect_jeb_client` / `inspect_apktool_client` at the start of Task 3 and update this table.
+### Verified gaps (Task 3, 2026-11-12)
+
+| REA capability | Result on this Windows machine |
+| --- | --- |
+| adb: device, package inspect, `pull_adb_package`, logcat, file listing | works |
+| `inspect_android_package`, class/method search (JADX) | unavailable: `REA_JADX_MCP_JAR` not set |
+| `decode_android_resources` (apktool) | unavailable: apktool not on PATH, `REA_APKTOOL_COMMAND` not set |
+| Native analysis of ARM64 ELF (Ghidra) | unavailable: `GHIDRA_INSTALL_DIR` not set, and the Windows Ghidra profile only accepts PE targets |
+| `inspect_binary_layout` (pwntools) | unavailable: Linux x64 only |
+| Hopper / IDA / Kuna | unavailable (unsupported host or not configured) |
+| Frida | not tested |
+
+Workarounds in use, all stdlib or plain CLI: `unzip` for APK inventory, `tools/axml_dump.py` to decode the binary manifest, Python string scans of `.so` and `.dex` files, `dumpsys package`, `uiautomator dump`, `screencap`. Limit: no decompilation or disassembly, so findings stay at manifest, symbol-name and string level. If a task needs method-level understanding, the owner must supply JADX (`jadx-headless-mcp` 0.7.1 jar) or Ghidra 12.1.x; ask before relying on it.
+
+Windows note: adb is a Windows binary, so under Git Bash set `MSYS_NO_PATHCONV=1` for device paths like `/sdcard/...`, and pass `adb pull` destinations as relative paths.
 
 Rules in force (CLAUDE.md §2.2, §5.2): read-only adb (`pm list`, `dumpsys`, `logcat`, `pull` of the app's own APK); back up into `.re-workspace/backups/` before anything that could change data; never uninstall/clear the emulator apps; no committing decompiled code, `.so`, `.dex` or assets.
 

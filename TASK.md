@@ -6,8 +6,8 @@ Phase: 0 (research and RE). Decision log: app licence = GPLv3 open source. No EX
 | # | Task | Status |
 | --- | --- | --- |
 | 1 | Skeleton, `.gitignore`, `TASK.md`, `TOOLING.md`, read-only adb inventory | done, committed |
-| 2 | Open-source alternatives matrix, licence compatibility matrix, `docs/licenses/DECISION.md` | done, awaiting review |
-| 3 | RE note + UI capture: John GBA Lite | todo |
+| 2 | Open-source alternatives matrix, licence compatibility matrix, `docs/licenses/DECISION.md` | done, committed |
+| 3 | RE note + UI capture: John GBA Lite | done, awaiting review |
 | 4 | RE note + UI capture: MelonDS (upstream source first) | todo |
 | 5 | RE note + UI capture: JoiPlay main | todo |
 | 6 | RE note: JoiPlay Ren'Py plugin | todo |
