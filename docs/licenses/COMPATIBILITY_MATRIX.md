@@ -27,6 +27,9 @@ Rule applied: GPLv3 can absorb GPLv3, GPLv2-or-later, MPL-2.0, LGPL, MIT, BSD an
 | cellicom/rpgmaker-to-android | MIT | API | yes | Brand new, unproven. |
 | joiplay/commons, joiplay/joipad | MIT | `LICENSE` files (Task 6) | yes | JoiPlay's shared plugin-contract models and on-screen pad. Reference only; our contract is our own design. |
 | joiplay/renpy (Ren'Py fork) | Ren'Py terms: MIT plus LGPL-derived parts | upstream `license.rst`; fork has no licence field | yes, with LGPL duties | Closest public reference for embedding Ren'Py on Android. |
+| joiplay/mkxp (mkxp fork with JoiPlay bindings) | GPL-2.0 per GitHub; sampled headers say v2 or later | `src/main.cpp`, `src/config.cpp` headers (Task 7) | yes by headers, but 2022 snapshot, Ruby 1.8 only | Behaviour reference. Start our port from mkxp-z. |
+| joiplay/android-mkxp (Android plugin shell) | **none declared** (plugin notice claims GPLv2) | no LICENSE file, no GitHub licence field (Task 7) | **no** | Do not vendor; reference only. |
+| ruffle-rs/ruffle-android | `LICENSE.md` present (GitHub: NOASSERTION); Ruffle itself is MIT OR Apache-2.0 | GitHub API (Task 7), file not read in full | likely yes | Clean reference if a Flash engine is ever added. Read `LICENSE.md` before use. |
 | Live2D Cubism Core (`libLive2DCubismCore.so`, shipped inside the JoiPlay Ren'Py plugin) | Live2D proprietary licence | seen as a binary in the plugin APK (Task 6) | **no** | Do not bundle without a Live2D agreement. Not needed for our baseline. |
 
 ## Hazards to watch

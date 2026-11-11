@@ -10,8 +10,8 @@ Phase: 0 (research and RE). Decision log: app licence = GPLv3 open source. No EX
 | 3 | RE note + UI capture: John GBA Lite | done, committed |
 | 4 | RE note + UI capture: MelonDS (upstream source first) | done, committed |
 | 5 | RE note + UI capture: JoiPlay main | done, committed |
-| 6 | RE note: JoiPlay Ren'Py plugin | done, awaiting review |
-| 7 | RE note: JoiPlay RPG Maker plugin (+ Ruffle runtime observation) | todo |
+| 6 | RE note: JoiPlay Ren'Py plugin | done, committed |
+| 7 | RE note: JoiPlay RPG Maker plugin (+ Ruffle runtime observation) | done, awaiting review |
 | 8 | `SYNTHESIS.md`, `CHEAT_FORMATS.md`, `UI_SPEC_GBA/NDS/PC.md`, module map revision, exit checklist | todo |
 
 ## Task 1 acceptance
