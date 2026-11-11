@@ -42,7 +42,7 @@ Observed by launching one real game (Infinite Fusion, RPG Maker XP engine type "
 **Step 1: intent.** Logcat shows JoiPlay writing "Launcher : Launching <game title>" to its own log, then the system line `START u0 {flg=0x10000000 cmp=cyou.joiplay.rpgm/.PermissionActivity (has extras)}` from JoiPlay's user id. So:
 
 - It is an **explicit-component** intent to the plugin package's `PermissionActivity` (exported, single top), with `FLAG_ACTIVITY_NEW_TASK`.
-- The intent has extras. Their key names and values are **Unknown**: Android does not log them and no decompiler is available on this machine.
+- The intent has extras. Android does not log their contents, and no decompiler is available here. For the Ren'Py plugin the extras are known from its public source (Task 6): two string extras, `game` and `settings`, each a JSON object. The RPG Maker plugin is closed, but it shares the same library and launch pattern, so it very likely takes the same two extras (inferred).
 - The plugin's manifest also declares per-engine actions on `PermissionActivity`: `cyou.joiplay.rpgmxp.PermissionActivity`, `cyou.joiplay.rpgmvx.PermissionActivity`, `cyou.joiplay.rpgmvxace.PermissionActivity` (one APK serves three RGSS versions), and `cyou.joiplay.renpy.PermissionActivity` in the Ren'Py plugin. Inferred: the action selects the RPG Maker generation when the component alone is not enough. Not confirmed on the wire in this run, because the log line shows only the component.
 
 **Step 2: plugin start-up.** The plugin's `PermissionActivity` checks storage permission (the plugin also holds all-files access), then starts the plugin's non-exported `MainActivity` (landscape, immersive), which runs the engine. The first launch showed an Android permission dialog from the system's permission controller.
@@ -115,7 +115,7 @@ The "P.Essentials" group is the part most relevant to the owner's games: JoiPlay
 
 ## 9. Open questions
 
-1. Names and values of the extras on the launch intent (needs a decompiler or Frida; neither is configured here).
+1. Exact extras for the RPG Maker plugin (known for the Ren'Py plugin: `game` and `settings` JSON strings; see `joiplay-renpy-plugin.md`). Confirming needs a decompiler or Frida, neither configured here.
 2. How the 12-hex game id is derived.
 3. Where Pokémon Essentials saves land (`UserData/AppData`?) and whether `File A.rxdata`-style saves can be copied in. Needs one real in-game save.
 4. What `gamedb.zip` contains and how it is used.

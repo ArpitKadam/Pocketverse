@@ -25,6 +25,9 @@ Rule applied: GPLv3 can absorb GPLv3, GPLv2-or-later, MPL-2.0, LGPL, MIT, BSD an
 | Android mkxp-z forks (thehatkid, BookerRues9, vrcxz, pif-android) | none set | GitHub API | **no** | No licence means all rights reserved. Do not vendor. |
 | Essentia | GPL-2.0 per GitHub field | API | **unverified** | If GPL-2.0-only it cannot be merged into a GPLv3 app. Check headers before reuse. |
 | cellicom/rpgmaker-to-android | MIT | API | yes | Brand new, unproven. |
+| joiplay/commons, joiplay/joipad | MIT | `LICENSE` files (Task 6) | yes | JoiPlay's shared plugin-contract models and on-screen pad. Reference only; our contract is our own design. |
+| joiplay/renpy (Ren'Py fork) | Ren'Py terms: MIT plus LGPL-derived parts | upstream `license.rst`; fork has no licence field | yes, with LGPL duties | Closest public reference for embedding Ren'Py on Android. |
+| Live2D Cubism Core (`libLive2DCubismCore.so`, shipped inside the JoiPlay Ren'Py plugin) | Live2D proprietary licence | seen as a binary in the plugin APK (Task 6) | **no** | Do not bundle without a Live2D agreement. Not needed for our baseline. |
 
 ## Hazards to watch
 
