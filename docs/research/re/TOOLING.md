@@ -55,7 +55,7 @@ Extra JoiPlay component found: `cyou.joiplay.runtime.ruffle` (Flash runtime plug
 Notes:
 
 - The `-patreon` JoiPlay builds are supporter builds. We observe them as installed; the RE work does not touch billing or licence checks.
-- The MelonDS build `2.0.1 PS` (package `me.magnum.melonds`) is the melonDS-Android fork family. The "PS" suffix is unexplained; confirm upstream and fork lineage in Task 4 from source, not from the installed build.
+- The MelonDS build `2.0.1 PS` (package `me.magnum.melonds`) is the melonDS-Android fork family. "PS" is the `playStore` product flavor (confirmed from source in Task 4).
 - Full permission lists, components and intent filters come in the per-app tasks (Tasks 3-7).
 
 ## Test fixtures
