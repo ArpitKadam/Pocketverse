@@ -601,3 +601,29 @@ Filled in Phase 6 and merged into `docs/design/PARITY.md`. "Reference" is the be
 | Close confirmation | "Do you want to close the game?" No / Yes | TBD Phase 6 | none |
 | Plugin info screens | icon, notices, licences, hide-icon, Close, Save Logs | TBD Phase 6 | becomes About and licences page; hide-icon dropped |
 | Permission dialog flow | system prompts + plugin alert + all-files page | TBD Phase 6 | avoided by design; fallback is one in-app dialog |
+
+
+---
+
+## Addendum A (2026-11-12): scope decisions for PC mode ("full experience")
+
+The owner asked for the full JoiPlay-style experience and left the scoping to us. Decisions, with reasons:
+
+| Feature | Decision | Reason |
+| --- | --- | --- |
+| Add Game (point at a launch file) and Import Archive (zip, 7z, rar, tar, password prompt) | **Keep**, Phase 2 | core import flow; spec 7.2 detection runs on the result |
+| Install Package (JoiPlay `.jgp`) | **Keep as our own package format first**: export and import of a Pocketverse game package (a zip of the whole game folder including `meta.json`, saves, states, cheats). Importing JoiPlay `.jgp` files is best effort and later; the container format is undocumented and not reverse engineered | same "move a game with its saves and settings" feature without depending on an undocumented format |
+| Import RGA File (patch) | **Replace with "Apply patch archive"**: overlay the archive's files over the game folder after taking a backup (JoiPlay's own documentation describes patches as copy-over files). `.rga` itself is deferred because its format is unknown | behaviour first, format later |
+| Game card menu | **Keep every item**: Patch, Export, Edit (name, version, icon, type), Delete (optional folder deletion), Create Shortcut, Open Folder, About, Settings, plus engine items Decrypt Files (RGSS archives), Unpack/Repack Scripts, Optimize Maps (RPG Maker), Decompile Scripts (Ren'Py), Edit Plugins (MV/MZ) | full experience; engine items arrive with their engines (Phase 5) |
+| Settings groups | **Show App, Gamepad, Ren'Py, HTML (MV/MZ), RPG and P.Essentials.** Show Ruffle only if a Flash engine is installed | each group is hidden when its engine pack is not installed |
+| Game Selection dropdown (global vs per game) | **Keep** | matches our global default plus per-game override (spec 9.1) |
+| Backup/Restore | **Keep**, as a backup of the library folder and settings rather than a private database | our library is folder-based (SYNTHESIS section 2) |
+| Remove Missing Games | **Keep** (rescan library) | our index is rebuildable |
+| Compatibility List (online ratings, account) and the online hub deep link | **Dropped** | offline-first, no accounts (CLAUDE.md goal 5) |
+| Cloud sync, supporter builds, ads, update prompts | **Dropped** | not reproduced by rule |
+| Lock screen password, content filter | **Keep, later** (Phase 6) | cheap and low risk |
+| Themes System, Wallpaper, Day, Night, Amoled plus user primary colour | **Keep** | declared feature of PC mode; values designed by us (Day and Amoled values were never captured) |
+
+Orientation: plugin games are landscape-locked; the JoiPlay library adapts to both orientations (Task 5). Rotation chosen inside a game persisted to the library in JoiPlay; in Pocketverse the library follows its own orientation setting and a game's rotation must not leak back (deliberate deviation).
+
+Open question 3 in section 10 is answered by this addendum. Still open: the unread submenus listed in section 10 item 2.

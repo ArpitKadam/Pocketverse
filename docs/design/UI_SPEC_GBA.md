@@ -454,3 +454,37 @@ PROPOSED defaults (our own, not copied):
 | S17 Speed dialog | x0.25 to x16, default x1 | TBD Phase 6 | None planned |
 | S18 Exit confirm | Save / Don't save / Cancel with play time | TBD Phase 6 | None planned |
 | S19 Interstitial ad | Full-screen ad | n/a | Dropped (no ads) |
+
+
+---
+
+## Addendum A (2026-11-12): landscape and layout editor, captured
+
+Captured on the owner's phone with the system rotation temporarily set to landscape (original values 0/0 restored afterwards). Screen 1600 x 720 px, 1 dp = 1.75 px. Raw captures: `.re-workspace/ui-reference/johngbalite/L01..L07_*` (gitignored). Pad elements are custom drawn, so their numbers are eyeballed from the PNG (marked ~); the library and dialogs are measured from the XML.
+
+### A.1 Library in landscape (observed)
+
+- The list becomes a **grid of square tiles**. Tile thumbnail about 312 x 312 px (~178 dp) with a one-line title strip under it (title ellipsised), tile origin x=4 px.
+- A small **orange dot** (~20 px) sits at the thumbnail's top-right on a game that has been played (it was absent while "Not played"). Meaning inferred: played or has saved state. Unverified.
+- The thumbnail is the last screenshot of the game; unplayed games show black (Task 3).
+- Toolbar is 84 px (48 dp) tall and starts at y=0: **the status bar is hidden in landscape**. Search, Game folder and Import file icons sit at the right; the overflow icon is at the far right edge. Drawer behaviour is as in portrait.
+
+### A.2 In-game in landscape (observed)
+
+- The game image is scaled to full height: about 1080 x 720 px (~617 x 411 dp), centred, with black bars (x 260-1340 px, about 16%-84% of the width). No advertisement row appears in landscape in this capture (ads are dropped in our app regardless).
+- Control placement (px, ~): L pill x 225-377, y 268-318; R pill x 1307-1459, y 268-318 (about 150 x 50 px, 86 x 29 dp; shoulders sit about a third of the way down, not at the top corners); d-pad box x 141-405, y 389-655 (266 px, 152 dp); A circle x 1293-1404, y 389-500 (111 px, 63 dp); B circle x 1293-1404, y 543-654; between A and B an "A+B" zone (the setting "Enable A+B between A and B"); SELECT pill x 645-755, y 613-649 and START pill x 943-1053, same row, overlapping the lower part of the game image.
+- The four action icons (quick save, quick load, fast-forward, menu) sit in the **top corners on the black bars**: save arrow (189, 48), load arrow (364, 48), fast-forward (1278, 48), menu (1467, 48), icon size about 42 px. All controls are drawn translucent over the picture.
+- Clock bottom-left (28, 686) and battery percent bottom-right (1511, 686), same small text as portrait.
+- The menu dialog is a scrolling list: in landscape only eight of the ten rows fit (rows 86 px / 49 dp tall, dialog x 347-1330), so the last rows need a scroll inside the list (a swipe that starts outside the list closes the dialog).
+- **Exit confirmation (observed):** choosing Exit opens a dialog "Do you want to save changes and exit?" with the play time and three buttons: DON'T SAVE, CANCEL, SAVE. A full-screen ad followed DON'T SAVE (dropped in ours).
+
+### A.3 Layout editor (observed, Settings > Layouts (Landscape))
+
+- Opens full screen with a **grid background**, the game area shown as a **teal rectangle** (x 260-1340 px), every control wrapped in a thin **blue bounding box**, and the centred hint text: "Drag controls to move. Long click to change size."
+- Editable items: the screen, the four action icons, L, R, d-pad, A, B, an A+B overlap zone, SELECT, START.
+- Back opens a dialog with: Edit display items, Menu button size, Fixed screen position (a check item), Screen scaling mode, Reset, Cancel, Save. We cancelled: nothing was changed.
+- Layouts are stored per orientation, and "Save layouts by screen resolution" makes a separate set per display size (recommended by the app for foldables).
+
+### A.4 Resolved and still-open questions
+
+Resolved: landscape layout of the library, the in-game screen and the layout editor; the exit-confirm dialog. Still open: the sub-dialogs of "Edit display items", "Menu button size" and "Screen scaling mode" (not opened); whether the orange dot means "has state"; the fast-forward glyph speed; the up-arrow behaviour (quick load assumed).

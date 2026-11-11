@@ -143,33 +143,36 @@ Deliverable: the five per-app notes plus `docs/research/re/SYNTHESIS.md`. This i
 
 ---
 
-## 6. Architecture (initial proposal — revise after Phase 0)
+## 6. Architecture (revised after Phase 0, approved 2026-11-12)
+
+Rationale for every change from the first proposal is in `docs/architecture/MODULE_MAP.md`.
 
 ```
 Pocketverse/
-├── app/                        # thin shell: navigation, DI, theme switch host
+├── app/                        # shell: navigation, DI, theme host, process/activity declarations per engine family
 ├── core/
-│   ├── core-model/             # Game, Platform, CheatEntry, SaveSlot types
-│   ├── core-common/            # utils, result types, logging
-│   ├── core-storage/           # per-game folder manager (Section 7)
-│   └── core-database/          # Room: library, play stats
+│   ├── core-model/             # Game, Platform, EngineType, GameRecord (meta.json schema), CheatEntry, SaveSlot
+│   ├── core-common/            # result types, logging, version-tagged JSON helpers
+│   ├── core-storage/           # GameFolder API, path resolution (real path vs SAF), per-game folder manager (Section 7)
+│   └── core-database/          # Room: library index (rebuildable from folders), play stats
 ├── feature/
 │   ├── feature-library/
-│   ├── feature-import/         # detection + import pipeline
-│   ├── feature-player/         # in-game screen, controls overlay, menus
+│   ├── feature-import/         # pure detection + import pipeline, explicit rejection reasons
+│   ├── feature-player/         # in-game screen host, controls overlay, pause/menu, state slots UI
 │   ├── feature-cheats/         # cheat manager UI
 │   └── feature-settings/
 ├── engine/
-│   ├── engine-api/             # EngineRuntime interface (load, run, pause, save/load state, memory access, cheats hook)
-│   ├── engine-libretro/        # JNI host for libretro cores (GBA, NDS)
-│   ├── engine-mkxp/            # RPG Maker XP/VX/VX Ace
-│   ├── engine-renpy/           # Ren'Py
-│   └── engine-rpgmv/           # RPG Maker MV/MZ (WebView-based), if chosen
+│   ├── engine-api/             # EngineRuntime, EngineLaunchRequest, EngineResult, EngineCapabilities (load, run, pause, save/load state, memory access, cheats hook)
+│   ├── engine-libretro/        # host for libretro cores (GBA, NDS)
+│   ├── engine-mkxp/            # Android port of mkxp-z + our own Ruby shim pack
+│   ├── engine-renpy/           # Ren'Py runtime host
+│   ├── engine-rpgmv/           # RPG Maker MV/MZ (WebView-based), if chosen
+│   └── engine-compat/          # shared compatibility data for script engines (patch list schema, path-case index, Win32/ENV shim spec)
 ├── cheats/
-│   ├── cheats-core/            # canonical cheat model, storage, orchestration
-│   ├── cheats-gba/             # GameShark / Action Replay / Code Breaker for GBA
-│   ├── cheats-nds/             # Action Replay (+ other DS formats found in research)
-│   └── cheats-script/          # engine-native cheats for .exe-style games
+│   ├── cheats-core/            # canonical cheat model, storage, import/export (text, .cht, XML)
+│   ├── cheats-gba/             # raw, GameShark, GSA v3, Action Replay, Code Breaker decoders
+│   ├── cheats-nds/             # Action Replay DS decoder and applier
+│   └── cheats-script/          # per-engine script packs and the flag/trigger protocol for .exe-style games
 ├── ui/
 │   ├── ui-theme-api/           # ThemeMode contract
 │   ├── ui-theme-gba/
@@ -180,6 +183,8 @@ Pocketverse/
 ├── .re-workspace/              # (gitignored) RE scratch space
 └── tools/                      # dev scripts, each documented
 ```
+
+Each engine family runs in its own Android process (declared in `app`); see `docs/architecture/MODULE_MAP.md` change 5.
 
 Key rule: **features talk to engines only through `engine-api`.** Adding a new engine (e.g. Godot, Ruffle) must not touch library, cheats UI or storage code.
 

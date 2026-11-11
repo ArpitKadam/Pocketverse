@@ -468,3 +468,49 @@ Typeface appears to be a geometric sans (Montserrat-like) in the screenshots; th
 | New-cheat form | Name, description, code, SAVE | TBD Phase 6 | Format auto-detect indicator added (cheats section 8.2) |
 | Layout list / editor | Source: draggable, resizable components | TBD Phase 6 | Not observed; scope open |
 | External display / folds | Source only | TBD Phase 6 | Not observed |
+
+
+---
+
+## Addendum A (2026-11-12): landscape layout editor captured; control placement decision
+
+Captured with the system rotation temporarily set to landscape (original 0/0 restored). Screen 1600 x 720 px, 1 dp = 1.75 px. Raw captures: `.re-workspace/ui-reference/melonds/L01..L10_*` (gitignored). No ROM was loaded for this pass (the library was empty), so in-game landscape and the pause dialog in landscape remain uncaptured; the layout editor shows the same landscape arrangement the game uses.
+
+### A.1 Decision: use the installed control placement
+
+The owner chose the **installed** placement. The layout list shows that the installed placement is the owner's custom layout **"My Layout"** (selected radio), not the app's built-in "Default". So the target preset for Pocketverse NDS mode is a replica of "My Layout" (portrait numbers in section 6, landscape numbers below). We also offer our own built-in "Default" preset written from the structure in section 5.
+
+### A.2 Layout list (observed)
+
+Toolbar "Layouts" with a back arrow and a "+" at the far right. Two rows: **Default** (radio) and **My Layout** (red-selected radio, three-dot menu at the right with **Edit** and **Delete**). Rows are 86 px (49 dp) tall with thin dividers. Entry point: Settings > Input > Layouts (the Input page also lists Key mapping, Soft input behaviour, Vibrate on touch, Soft input opacity).
+
+### A.3 Landscape arrangement of "My Layout" (observed in the editor, px at 1600 x 720)
+
+| Element | Bounds (px, ~) | dp (~) | Note |
+| --- | --- | --- | --- |
+| Top screen (blue in editor) | x 77-1035, y 0-720 | 547 x 411 | large, left, full height |
+| Bottom screen (red) | x 1038-1598, y 0-420 | 320 x 240 | right side, top-aligned, 4:3 |
+| L | x 77-163, y 0-86 | 49 x 49 | top-left corner of the top screen |
+| R | x 1513-1599, y 0-86 | 49 x 49 | top-right corner |
+| Four small buttons (screen swap, touch toggle, microphone, fast-forward) | x 650-950, y 0-70, four 70 px tiles | 40 dp tiles | along the top edge over the top screen |
+| D-pad | x 85-313, y 485-710 | 130 x 129 | bottom-left over the top screen |
+| SELECT, START | circles centred x 760 and 838, y 685 | 40 dp | bottom centre-left |
+| X, Y, A, B diamond | box x 1356-1598, y 476-718 | 138 x 138 | bottom-right, over the black area below the bottom screen |
+
+Each control has a dashed bounding box in the editor. The editor's own bottom bar (84 px, 48 dp) has "ADD COMPONENT" at the left and "MENU" at the right.
+
+### A.4 Layout editor (observed)
+
+- Full-screen editor over a dimmed background image. Tapping a control selects it (dashed highlight) and shows a bottom panel with **DELETE** and a **Size** slider (the diamond read 245) and a close icon; selecting a screen shows **DELETE**, a close button, **CENTER HORIZONTALLY** and **CENTER VERTICALLY**.
+- MENU dialog: **Properties, Background, Revert changes, Reset to default, Save and exit, Exit without saving**.
+- Properties dialog: **Layout name**, **Layout orientation** (value "Follow system"), **Use default opacity** (switch), **Layout opacity**; CANCEL / OK.
+- ADD COMPONENT dialog "Choose component": Reset, Pause, Swap Screens, Quick Save, Quick Load, Rewind and further items below the fold (not read; see section 5 for the source list).
+- No changes were saved.
+
+### A.5 Library in landscape (observed)
+
+The toolbar spans the full width under a 42 px (24 dp) status bar: title "melonDS" at the left; **Search ROMs, Sort ROMs and Boot firmware icons are shown inline** (not in the overflow) plus the overflow icon at the far right. Settings in landscape is a single-column list with the same entries as portrait.
+
+### A.6 Resolved and open
+
+Resolved: control placement decision; landscape layout and editor. Still open (needs a ROM in the library): landscape pause and slot dialogs; whether a library row tap launches directly or opens details; other layout orientations; the hidden entries of ADD COMPONENT.
