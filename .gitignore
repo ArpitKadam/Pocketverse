@@ -1,3 +1,10 @@
 DemoGames/
 /research/
 /.re-workspace/
+.gradle/
+build/
+local.properties
+.idea/
+*.iml
+.kotlin/
+captures/
