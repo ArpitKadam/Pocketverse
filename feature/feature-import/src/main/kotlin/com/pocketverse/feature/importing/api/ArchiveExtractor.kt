@@ -8,6 +8,7 @@ import java.io.InputStream
 import java.util.zip.GZIPInputStream
 import net.lingala.zip4j.ZipFile
 import net.lingala.zip4j.exception.ZipException
+import org.apache.commons.compress.MemoryLimitException
 import org.apache.commons.compress.PasswordRequiredException
 import org.apache.commons.compress.archivers.sevenz.SevenZFile
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream
@@ -32,6 +33,8 @@ sealed interface ExtractResult {
  */
 class ArchiveExtractor(
     private val limits: ImportLimits = ImportLimits(),
+    /** Memory the 7z decoder may use (its dictionary size comes from the archive, so it must be capped). */
+    private val maxDecoderMemoryKb: Int = 256 * 1024,
     private val availableBytes: (File) -> Long = { it.usableSpace },
 ) {
     /** Which archive format [file] is, or null when it is not one we can open. Reads a few hundred bytes. */
@@ -67,6 +70,8 @@ class ArchiveExtractor(
             }
         } catch (e: EncryptedArchiveException) {
             ExtractResult.Failed(ImportError.PasswordRequired(e.message ?: "the archive is password protected"))
+        } catch (e: MemoryLimitException) {
+            ExtractResult.Failed(ImportError.LimitExceeded("the archive asks for more decoder memory than allowed ($maxDecoderMemoryKb KB): ${e.message}"))
         } catch (e: IOException) {
             ExtractResult.Failed(ImportError.SourceUnreadable(e.message ?: "cannot read ${archive.name}"))
         }
@@ -84,6 +89,7 @@ class ArchiveExtractor(
                 if (attempt >= MAX_PASSWORD_ATTEMPTS) return ExtractResult.Failed(ImportError.PasswordRequired("wrong password for '${archive.name}'"))
             }
         }
+        if (zip.fileHeaders.size > limits.maxEntries) return ExtractResult.Failed(ImportError.LimitExceeded("more than ${limits.maxEntries} entries"))
         val headers = zip.fileHeaders.filter { !it.isDirectory }
         val total = headers.sumOf { it.uncompressedSize.coerceAtLeast(0) }
         val writer = Writer(target, archive.name, total, headers.size, cancel, progress)
@@ -114,7 +120,8 @@ class ArchiveExtractor(
         var attempt = 0
         while (true) {
             try {
-                return SevenZFile.builder().setFile(archive).apply { pw?.let { setPassword(it) } }.get().use { sz ->
+                return SevenZFile.builder().setFile(archive).setMaxMemoryLimitKiB(maxDecoderMemoryKb).apply { pw?.let { setPassword(it) } }.get().use { sz ->
+                    if (sz.entries.count() > limits.maxEntries) return ExtractResult.Failed(ImportError.LimitExceeded("more than ${limits.maxEntries} entries"))
                     val all = sz.entries.filter { !it.isDirectory }
                     val writer = Writer(target, archive.name, all.sumOf { it.size.coerceAtLeast(0) }, all.size, cancel, progress)
                     var entry = sz.nextEntry
@@ -161,6 +168,7 @@ class ArchiveExtractor(
     ) {
         private val targetPath = target.canonicalPath + File.separator
         private var files = 0
+        private var entries = 0
         private var written = 0L
         private var skipped = 0
 
@@ -172,16 +180,23 @@ class ArchiveExtractor(
                 if (!isJunkName(rawName)) skipped++
                 return null
             }
+            val segments = name.split('/')
+            if (name.length > MAX_PATH_LENGTH || segments.size > MAX_DEPTH || segments.any { it.length > MAX_NAME_LENGTH }) {
+                skipped++
+                return null
+            }
             val dest = File(target, name)
             if (!(dest.canonicalPath + File.separator).startsWith(targetPath)) {
                 skipped++
                 return null
             }
+            // Every entry counts, folders too: millions of empty folders exhaust the file table as surely as files.
+            if (++entries > limits.maxEntries) return fail(ImportError.LimitExceeded("more than ${limits.maxEntries} entries"))
             if (isDirectory) {
                 dest.mkdirs()
                 return null
             }
-            if (++files > limits.maxEntries) return fail(ImportError.LimitExceeded("more than ${limits.maxEntries} files"))
+            files++
             if (declared > limits.maxEntryBytes) return fail(ImportError.LimitExceeded("'$name' is larger than ${limits.maxEntryBytes} bytes"))
             val cap = if (declared >= 0) declared else limits.maxEntryBytes
             if (written + cap > limits.maxTotalBytes) return fail(ImportError.LimitExceeded("more than ${limits.maxTotalBytes} bytes in total"))
@@ -235,6 +250,9 @@ class ArchiveExtractor(
         const val MIN_MARGIN = 64L * 1024 * 1024
         const val PROBE_LIMIT = 1024L * 1024
         const val MAX_PASSWORD_ATTEMPTS = 5
+        const val MAX_DEPTH = 64
+        const val MAX_NAME_LENGTH = 255
+        const val MAX_PATH_LENGTH = 4096
 
         fun isJunkName(raw: String): Boolean {
             val n = raw.replace('\\', '/')

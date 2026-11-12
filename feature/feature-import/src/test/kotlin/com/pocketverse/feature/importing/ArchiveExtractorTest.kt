@@ -29,7 +29,7 @@ class ArchiveExtractorTest {
     }
 
     private fun extract(archive: File, limits: ImportLimits = ImportLimits(), pw: ArchivePasswords = ArchivePasswords { _, _ -> null }, space: Long = Long.MAX_VALUE) =
-        ArchiveExtractor(limits) { space }.extract(archive, out, pw)
+        ArchiveExtractor(limits, availableBytes = { space }).extract(archive, out, pw)
 
     private fun assertExtracted() {
         assertArrayEquals(files.getValue("a.txt"), File(out, "a.txt").readBytes())
@@ -55,7 +55,9 @@ class ArchiveExtractorTest {
             ArchiveFixtures.tar(File(tmp, "a.tgz"), files, gzip = true),
         ).forEach { archive ->
             out.deleteRecursively(); out.mkdir()
-            val r = extract(archive) as ExtractResult.Done
+            val res = extract(archive)
+            assertTrue(res is ExtractResult.Done, "${archive.name}: $res")
+            val r = res as ExtractResult.Done
             assertEquals(2, r.fileCount, archive.name)
             assertExtracted()
         }
@@ -118,6 +120,48 @@ class ArchiveExtractorTest {
         assertTrue((extract(zip, ImportLimits(maxEntryBytes = 100)) as ExtractResult.Failed).error is ImportError.LimitExceeded)
         out.deleteRecursively(); out.mkdir()
         assertTrue((extract(zip, ImportLimits(maxTotalBytes = 200)) as ExtractResult.Failed).error is ImportError.LimitExceeded)
+    }
+
+    @Test
+    fun `folders count toward the entry limit, so a flood of empty folders is refused`() {
+        val dirs = (1..50).associate { "d$it/" to ByteArray(0) }
+        // A tar has no index, so only the check made as each entry arrives can stop it.
+        val tar = ArchiveFixtures.tar(File(tmp, "dirs.tar"), dirs)
+        val r = extract(tar, ImportLimits(maxEntries = 10)) as ExtractResult.Failed
+        assertTrue(r.error is ImportError.LimitExceeded)
+        assertTrue(out.listFiles()!!.size <= 10, "stopped at the limit, made ${out.listFiles()!!.size}")
+        // A zip is refused from its central directory before anything is created.
+        out.deleteRecursively(); out.mkdir()
+        val zip = ArchiveFixtures.zip(File(tmp, "dirs.zip"), dirs)
+        assertTrue((extract(zip, ImportLimits(maxEntries = 10)) as ExtractResult.Failed).error is ImportError.LimitExceeded)
+        assertEquals(0, out.listFiles()!!.size)
+    }
+
+    @Test
+    fun `absurdly deep or long names are skipped like escape attempts`() {
+        val deep = (1..70).joinToString("/") { "d" } + "/x.txt"
+        val long = "n".repeat(300) + ".txt"
+        val zip = ArchiveFixtures.zip(File(tmp, "deep.zip"), files + mapOf(deep to ByteArray(1), long to ByteArray(1)))
+        val r = extract(zip) as ExtractResult.Done
+        assertEquals(2, r.skippedUnsafe)
+        assertExtracted()
+    }
+
+    @Test
+    fun `a 7z with too many entries is refused before decoding`() {
+        val many = (1..20).associate { "f$it.txt" to ByteArray(1) }
+        val sz = ArchiveFixtures.sevenZ(File(tmp, "many.7z"), many)
+        val r = extract(sz, ImportLimits(maxEntries = 5)) as ExtractResult.Failed
+        assertTrue(r.error is ImportError.LimitExceeded)
+        assertEquals(0, out.walkTopDown().count { it.isFile })
+    }
+
+    @Test
+    fun `a 7z that needs more decoder memory than allowed is refused with a limit error`() {
+        val sz = ArchiveFixtures.sevenZ(File(tmp, "mem.7z"), files)
+        // The default LZMA2 dictionary written by Commons Compress is megabytes; allow only 1 KB.
+        val r = ArchiveExtractor(maxDecoderMemoryKb = 1).extract(sz, out) as ExtractResult.Failed
+        assertTrue(r.error is ImportError.LimitExceeded, "was ${r.error}")
     }
 
     @Test

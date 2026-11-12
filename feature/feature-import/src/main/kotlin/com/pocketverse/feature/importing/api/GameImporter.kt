@@ -19,7 +19,7 @@ class GameImporter(
     private val availableBytes: () -> Long = { library.root.usableSpace },
     private val limits: ImportLimits = ImportLimits(),
 ) {
-    private val extractor = ArchiveExtractor(limits) { availableBytes() }
+    private val extractor = ArchiveExtractor(limits, availableBytes = { availableBytes() })
     private val cartridges = CartridgeImporter(library, appVersion, clock, availableBytes)
     private val folders = FolderGameImporter(library, appVersion, clock, availableBytes, limits)
 
