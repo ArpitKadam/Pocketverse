@@ -157,6 +157,36 @@ class CartridgeImporterTest {
     }
 
     @Test
+    fun `a source that streams more than it declared is stopped, not written to disk`() {
+        val bytes = Fixtures.gba(size = 0x800)
+        var served = 0L
+        val lying = object : GameSource {
+            override val displayName = "bomb.gba"
+            override fun entries() = listOf(SourceEntry("bomb.gba", bytes.size.toLong()))
+            // The header is genuine, then an endless stream of data after it.
+            override fun open(path: String): InputStream = object : InputStream() {
+                private var pos = 0
+                override fun read(): Int = throw UnsupportedOperationException()
+                override fun read(b: ByteArray, off: Int, len: Int): Int {
+                    val n = minOf(len, 64 * 1024)
+                    for (i in 0 until n) b[off + i] = if (pos + i < bytes.size) bytes[pos + i] else 0
+                    pos += n
+                    served += n
+                    return n
+                }
+            }
+        }
+        val detection = detect(MemorySource("bomb.gba", "bomb.gba" to bytes))
+        val result = importer().import(lying, detection) as ImportResult.Failed
+        val err = result.error as ImportError.SourceChanged
+        assertEquals(0x800L, err.expectedBytes)
+        assertTrue(err.readBytes > 0x800)
+        assertTrue(served <= 128 * 1024, "stopped after one extra chunk, served $served")
+        assertEquals(0, leftovers())
+        assertTrue(library.scan().games.isEmpty())
+    }
+
+    @Test
     fun `awkward file names are made safe`() {
         assertEquals("a_b_.gba", CartridgeImporter.safeFileName("a:b?.gba", Platform.GBA))
         assertEquals("rom.nds", CartridgeImporter.safeFileName("...", Platform.NDS))

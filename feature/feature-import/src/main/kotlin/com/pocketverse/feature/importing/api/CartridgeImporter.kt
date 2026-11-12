@@ -118,6 +118,9 @@ class CartridgeImporter(
                         if (shouldCancel()) return Copy.Cancelled
                         val n = input.read(buf)
                         if (n < 0) break
+                        // Never write past the size detection saw: a source (for example a zip entry with a
+                        // false size in its header) must not be able to fill the disk.
+                        if (done + n > expected) return Copy.Failed(ImportError.SourceChanged(expected, done + n))
                         out.write(buf, 0, n)
                         sha.update(buf, 0, n)
                         crc.update(buf, 0, n)
