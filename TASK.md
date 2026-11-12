@@ -1,7 +1,7 @@
 # TASK.md — Pocketverse backlog
 
 Mode: gated. One task at a time; next starts on "Go for Task n".
-Phase: 1 (skeleton, storage, library DB). Phase 0 closed on 2026-11-12. Decision log: app licence = GPLv3 open source. No EXPLANATION.md (owner request).
+Phase: 2 (import pipeline and format detection). Phases 0 and 1 closed. Decision log: app licence = GPLv3 open source. No EXPLANATION.md (owner request).
 
 | # | Task | Status |
 | --- | --- | --- |
@@ -43,6 +43,17 @@ Do not start Phase 1 until the Phase 0 exit checklist (CLAUDE.md §5.3) is revie
 | P1-2 | Gradle multi-module skeleton (all modules from CLAUDE.md section 6, empty with READMEs), version catalog, builds, `ARCHITECTURE.md`, SPDX header check | done, committed |
 | P1-3 | `core-model`, `core-common`, `core-storage`: `GameFolder` API, folder creation, `meta.json` read/write, unit tests | done, committed |
 | P1-4 | `core-database`: Room library index, rebuild from folders, tests | done, committed |
-| P1-5 | `feature-library` + `app` wiring: empty library screen, folder layout created on import stub, instrumented test | done, awaiting review |
+| P1-5 | `feature-library` + `app` wiring: empty library screen, folder layout created on import stub, instrumented test | done, committed |
 
 Do not start P1-n+1 before "Go for P1-n+1".
+
+## Phase 2 tasks (import pipeline and format detection, CLAUDE.md sections 7.2 and 7.3)
+
+| # | Task | Status |
+| --- | --- | --- |
+| P2-1 | `feature-import`: `GameSource` abstraction and pure content-based `FormatDetector` (GBA, NDS headers; RPG Maker XP/VX/Ace, MV/MZ, Ren'Py folders; explicit rejection reasons), synthetic fixtures, checked against the owner's real files | done, awaiting review |
+| P2-2 | Cartridge import pipeline: hash, copy into `game/`, `meta.json`, free-space check, progress and cancellation; zip with one ROM | todo |
+| P2-3 | Folder and archive import: manifest hash, tree copy, zip/7z unpack with password prompt hook, wrapper-folder handling | todo |
+| P2-4 | App integration: pick file or folder (Storage Access Framework), import UI with progress and rejection reasons, delete-game flow | todo |
+
+Do not start P2-n+1 before "Go for P2-n+1".

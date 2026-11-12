@@ -1,6 +1,6 @@
 # Architecture
 
-How Pocketverse is built **now**. Updated in place when structure changes. Why things are shaped this way: `docs/architecture/MODULE_MAP.md`, `docs/architecture/STORAGE.md`, `docs/research/re/SYNTHESIS.md`. Current state: Phase 1, P1-5 done (library screen, app wiring).
+How Pocketverse is built **now**. Updated in place when structure changes. Why things are shaped this way: `docs/architecture/MODULE_MAP.md`, `docs/architecture/STORAGE.md`, `docs/research/re/SYNTHESIS.md`. Current state: Phase 2, P2-1 done (format detection).
 
 ## Build
 
@@ -27,6 +27,7 @@ Layout is the revised tree in `CLAUDE.md` section 6: `app`, `core/*`, `feature/*
 - **`core-database`:** `LibraryIndex` over one Room table. `meta.json` is the source of truth; the table only lets the library be listed, sorted and searched without opening every folder. `sync(library)` reuses `Library.scan()` and updates only rows whose `meta.json` changed; a stale schema is dropped and rebuilt (`fallbackToDestructiveMigration`), which is safe because nothing in it is not in a folder. Play statistics are written to `meta.json` first, then the row.
 - **`feature-library`:** `LibraryScreen` (stateless Compose), `LibraryViewModel`, `LibraryUiState`. The screen shows loading, error, an empty-state, or the game list, plus a note when folders could not be read. No theme yet.
 - **`app`:** `PocketverseApp` builds the `Library` (`getExternalFilesDir(null)/Pocketverse`) and the `LibraryIndex` by hand (no DI framework yet); `MainActivity` hosts `LibraryScreen` through the view model; `DebugImportStub` exists only to put a test game in debuggable builds until `feature-import` exists.
+- **`feature-import`:** `GameSource` abstraction and `FormatDetector` (pure, content-based). Cartridge headers are parsed per the public GBATEK layout; header problems that real ROM hacks have (wrong GBA checksum, wrong NDS CRC) are warnings, not rejections. Folder games are recognised by engine files, and a Windows `.exe` is never an engine marker. Verified against the owner's real GBA and NDS ROMs (local, gitignored) and synthetic fixtures.
 - Everything else is still an empty module with a README.
 
 ## Invariants (enforced by `./gradlew check`)
