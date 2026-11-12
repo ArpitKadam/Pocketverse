@@ -16,6 +16,9 @@ No emulator core, engine or game component is vendored yet. Entries are added wh
 | kotlinx.coroutines | 1.11.0 | Apache-2.0 | https://github.com/Kotlin/kotlinx.coroutines | linked into the app | P1-4 |
 | Robolectric | 4.16.1 | MIT | https://github.com/robolectric/robolectric | test only, not shipped | P1-4 |
 | AndroidX Test Core | 1.7.0 | Apache-2.0 | https://developer.android.com/jetpack/androidx/releases/test | test only, not shipped | P1-4 |
+| zip4j | 2.11.6 | Apache-2.0 | https://github.com/srikanth-lingala/zip4j | linked into the app | P2-3 |
+| Apache Commons Compress (and its dependencies commons-io, commons-lang3, commons-codec) | 1.28.0 | Apache-2.0 | https://commons.apache.org/proper/commons-compress/ | linked into the app | P2-3 |
+| XZ for Java | 1.12 | 0BSD / public domain | https://tukaani.org/xz/java.html | linked into the app | P2-3 |
 | JUnit 4 | 4.13.2 | EPL-1.0 | https://junit.org/junit4 | test only, not shipped | P1-4 |
 | AndroidX Lifecycle (ViewModel, runtime-compose) | 2.11.0 | Apache-2.0 | https://developer.android.com/jetpack/androidx/releases/lifecycle | linked into the app | P1-5 |
 | AndroidX Compose Foundation | BOM 2026.09.00 | Apache-2.0 | https://developer.android.com/jetpack/androidx | linked into the app | P1-5 |

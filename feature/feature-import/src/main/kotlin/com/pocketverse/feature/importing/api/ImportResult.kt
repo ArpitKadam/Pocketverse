@@ -14,6 +14,12 @@ sealed interface ImportResult {
     data object Cancelled : ImportResult
 
     data class Failed(val error: ImportError) : ImportResult
+
+    /** Detection said this is not importable; show [rejection] to the user. */
+    data class Rejected(val rejection: Detection.Rejected) : ImportResult
+
+    /** Several cartridges were found; ask the user which one, then import again with that path. */
+    data class NeedsChoice(val candidates: List<Detection.Cartridge>) : ImportResult
 }
 
 sealed interface ImportError {
@@ -25,9 +31,21 @@ sealed interface ImportError {
 
     data class PasswordRequired(val message: String) : ImportError
     data class Storage(val message: String) : ImportError
+
+    /** The source is bigger or has more files than the safety limits allow ([what] says which). */
+    data class LimitExceeded(val what: String) : ImportError
+
+    /** An archive format we cannot open (for example RAR). */
+    data class UnsupportedArchive(val kind: String) : ImportError
 }
 
-enum class ImportPhase { CHECKING_SPACE, COPYING, FINALIZING }
+enum class ImportPhase { CHECKING_SPACE, EXTRACTING, COPYING, FINALIZING }
 
-/** [bytesTotal] is the size of the file being copied; both are 0 outside [ImportPhase.COPYING]. */
-data class ImportProgress(val phase: ImportPhase, val bytesDone: Long, val bytesTotal: Long)
+/** Bytes and files done so far in the current phase; totals are 0 when unknown. */
+data class ImportProgress(
+    val phase: ImportPhase,
+    val bytesDone: Long,
+    val bytesTotal: Long,
+    val filesDone: Int = 0,
+    val filesTotal: Int = 0,
+)
