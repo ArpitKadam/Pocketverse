@@ -39,7 +39,7 @@ sealed interface ImportError {
     data class UnsupportedArchive(val kind: String) : ImportError
 }
 
-enum class ImportPhase { CHECKING_SPACE, EXTRACTING, COPYING, FINALIZING }
+enum class ImportPhase { CHECKING_SPACE, READING_SOURCE, EXTRACTING, COPYING, FINALIZING }
 
 /** Bytes and files done so far in the current phase; totals are 0 when unknown. */
 data class ImportProgress(

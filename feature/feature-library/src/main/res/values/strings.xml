@@ -19,4 +19,53 @@
     <string name="platform_rpgmaker">RPG Maker</string>
     <string name="platform_renpy">Ren\'Py</string>
     <string name="platform_rpgmaker_mv">RPG Maker MV/MZ</string>
+
+    <string name="library_import">Import</string>
+    <string name="library_import_file">Import a file</string>
+    <string name="library_import_folder">Import a folder</string>
+    <string name="library_game_menu_delete">Delete…</string>
+    <string name="library_delete_title">Delete this game?</string>
+    <string name="library_delete_body">“%1$s” will be removed from this device, together with its saves, save states and cheats. This cannot be undone.</string>
+    <string name="library_delete_confirm">Delete</string>
+    <string name="library_delete_cancel">Cancel</string>
+
+    <string name="import_running_title">Importing</string>
+    <string name="import_phase_checking">Checking free space…</string>
+    <string name="import_phase_reading">Reading the file…</string>
+    <string name="import_phase_extracting">Unpacking…</string>
+    <string name="import_phase_copying">Copying…</string>
+    <string name="import_phase_finalizing">Finishing…</string>
+    <string name="import_bytes_of">%1$s of %2$s</string>
+    <string name="import_cancel">Cancel</string>
+    <string name="import_ok">OK</string>
+
+    <string name="import_choice_title">Which game?</string>
+    <string name="import_choice_hint">This contains more than one game. Choose the one to import.</string>
+
+    <string name="import_password_title">Password needed</string>
+    <string name="import_password_hint">“%1$s” is password protected.</string>
+    <string name="import_password_wrong">That password did not work. Try again.</string>
+
+    <string name="import_done_title">Game added</string>
+    <string name="import_done_body">“%1$s” is now in your library.</string>
+    <string name="import_already_title">Already in your library</string>
+    <string name="import_already_body">This is the same game as “%1$s”, which is already in your library. Nothing was changed.</string>
+    <string name="import_cancelled_title">Import cancelled</string>
+    <string name="import_cancelled_body">Nothing was added.</string>
+
+    <string name="import_rejected_title">Cannot import this</string>
+    <string name="import_reject_empty">There is nothing to import: it contains no files.</string>
+    <string name="import_reject_archive">This archive could not be opened.</string>
+    <string name="import_reject_windows">This looks like a Windows program, not a game made with a supported engine. Windows programs cannot be run here.</string>
+    <string name="import_reject_unrecognised">Pocketverse does not recognise this as a GBA game, an NDS game, or a game made with RPG Maker or Ren\'Py.</string>
+    <string name="import_reject_conflict">This folder looks like it belongs to more than one game engine, so it is unclear how to run it.</string>
+
+    <string name="import_failed_title">Import failed</string>
+    <string name="import_error_space">There is not enough free space. About %1$s is needed and %2$s is available.</string>
+    <string name="import_error_unreadable">The selection could not be read: %1$s</string>
+    <string name="import_error_changed">The file changed while it was being read. Try again once it has finished copying.</string>
+    <string name="import_error_password">This archive needs a password.</string>
+    <string name="import_error_storage">The library could not be written to: %1$s</string>
+    <string name="import_error_limit">This is too large, or has too many files, to import safely (%1$s).</string>
+    <string name="import_error_archive">%1$s archives are not supported. Unpack it first, or use a zip or 7z file.</string>
 </resources>

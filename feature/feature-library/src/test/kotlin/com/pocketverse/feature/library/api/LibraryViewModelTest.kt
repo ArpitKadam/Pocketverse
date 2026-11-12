@@ -117,6 +117,32 @@ class LibraryViewModelTest {
     }
 
     @Test
+    fun `deleting a game removes its folder and the list refreshes`() {
+        addGame("Apple", "aaaaaaaa")
+        addGame("Pear", "bbbbbbbb")
+        val vm = LibraryViewModel(index, library)
+        val apple = vm.awaitState { !it.loading && it.games.size == 2 }.games.first { it.title == "Apple" }
+
+        vm.deleteGame(apple)
+
+        val state = vm.awaitState { it.games.size == 1 }
+        assertEquals(listOf("Pear"), state.games.map { it.title })
+        assertFalse(java.io.File(library.root, apple.folderName).exists())
+    }
+
+    @Test
+    fun `deleting a game that is already gone shows a message`() {
+        addGame("Apple", "aaaaaaaa")
+        val vm = LibraryViewModel(index, library)
+        val apple = vm.awaitState { !it.loading && it.games.isNotEmpty() }.games.single()
+        library.delete(apple.folderName)
+
+        vm.deleteGame(apple)
+
+        assertTrue(vm.awaitState { it.error != null }.error!!.contains("Apple"))
+    }
+
+    @Test
     fun `unreadable folders are counted`() {
         addGame("Apple", "aaaaaaaa")
         java.io.File(library.root, "Broken [deadbeef]").mkdir()

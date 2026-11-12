@@ -19,6 +19,8 @@ dependencies {
     api(project(":core:core-database"))
     api(project(":core:core-model"))
     api(project(":core:core-storage"))
+    // Import: results and progress types appear in the controller state.
+    api(project(":feature:feature-import"))
     api(libs.androidx.lifecycle.viewmodel)
 
     implementation(platform(libs.androidx.compose.bom))

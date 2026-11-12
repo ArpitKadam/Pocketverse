@@ -79,9 +79,27 @@ class Library(val root: File) {
         return LibraryScan(games, problems)
     }
 
-    /** Removes half-finished imports left by a crash. Call at start-up. */
+    /**
+     * Deletes the game folder called [folderName]. The folder is first renamed to a hidden name, so the game
+     * disappears from the library in one atomic step even if the app dies while the files are being removed;
+     * [cleanupAbandonedImports] finishes the job at the next start. Returns false when there is no such game
+     * folder. [folderName] must be a plain name (no separators), so it cannot point outside the library.
+     */
+    fun delete(folderName: String): Boolean {
+        require(folderName.isNotEmpty() && '/' !in folderName && '\\' !in folderName && folderName != "." && folderName != "..") {
+            "not a plain folder name: '$folderName'"
+        }
+        val dir = File(root, folderName)
+        if (!dir.isDirectory || folderName.startsWith(".")) return false
+        val doomed = File(root, "$DELETING_PREFIX${UUID.randomUUID()}")
+        Files.move(dir.toPath(), doomed.toPath(), StandardCopyOption.ATOMIC_MOVE)
+        doomed.deleteRecursively()
+        return true
+    }
+
+    /** Removes half-finished imports and half-finished deletions left by a crash. Call at start-up. */
     fun cleanupAbandonedImports(): Int {
-        val leftovers = root.listFiles { f -> f.isDirectory && f.name.startsWith(IMPORTING_PREFIX) }.orEmpty()
+        val leftovers = root.listFiles { f -> f.isDirectory && (f.name.startsWith(IMPORTING_PREFIX) || f.name.startsWith(DELETING_PREFIX)) }.orEmpty()
         leftovers.forEach { it.deleteRecursively() }
         return leftovers.size
     }
@@ -112,6 +130,7 @@ class Library(val root: File) {
 
     companion object {
         const val IMPORTING_PREFIX = ".importing-"
+        const val DELETING_PREFIX = ".deleting-"
     }
 }
 

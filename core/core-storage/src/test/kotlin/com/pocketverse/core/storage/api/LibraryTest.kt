@@ -138,6 +138,30 @@ class LibraryTest {
     }
 
     @Test
+    fun `delete removes the named game, refuses unsafe names and unknown folders`() {
+        val lib = Library(tmp)
+        val game = lib.beginImport(record()).commit()
+        assertFalse(lib.delete("Nope [00000000]"))
+        listOf("", ".", "..", "../x", "a/b", "a\\b").forEach { bad ->
+            org.junit.jupiter.api.assertThrows<IllegalArgumentException>("name=$bad") { lib.delete(bad) }
+        }
+        assertTrue(lib.delete(game.name))
+        assertFalse(game.root.exists())
+        assertTrue(lib.scan().games.isEmpty())
+        assertEquals(0, tmp.listFiles { f -> f.name.startsWith(Library.DELETING_PREFIX) }!!.size)
+    }
+
+    @Test
+    fun `a half-finished deletion is finished by cleanup and never listed`() {
+        val lib = Library(tmp)
+        val leftover = File(tmp, "${Library.DELETING_PREFIX}abc").also { it.mkdir() }
+        File(leftover, "game").mkdir()
+        assertTrue(lib.scan().games.isEmpty())
+        assertEquals(1, lib.cleanupAbandonedImports())
+        assertFalse(leftover.exists())
+    }
+
+    @Test
     fun `deleteRecursively removes the whole game folder`() {
         val lib = Library(tmp)
         val game = lib.beginImport(record()).commit()

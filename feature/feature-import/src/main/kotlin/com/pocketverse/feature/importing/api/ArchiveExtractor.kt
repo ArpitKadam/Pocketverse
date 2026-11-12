@@ -40,7 +40,11 @@ class ArchiveExtractor(
     /** Which archive format [file] is, or null when it is not one we can open. Reads a few hundred bytes. */
     fun kindOf(file: File): String? {
         if (!file.isFile || file.length() < 6) return null
-        val h = file.inputStream().use { it.readNBytes(512) }
+        return kindOf(file.inputStream().use { it.readNBytes(512) })
+    }
+
+    /** Same, from the first bytes of a file (at least 512 when it has that many). */
+    fun kindOf(h: ByteArray): String? {
         fun at(i: Int, vararg b: Int) = h.size > i + b.size && b.indices.all { h[i + it] == b[it].toByte() }
         return when {
             at(0, 0x50, 0x4B, 0x03, 0x04) || at(0, 0x50, 0x4B, 0x05, 0x06) -> "zip"

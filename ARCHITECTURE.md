@@ -16,6 +16,7 @@ Layout is the revised tree in `CLAUDE.md` section 6: `app`, `core/*`, `feature/*
 
 - **Pure Kotlin/JVM** (unit-testable with no device): `core-model`, `core-common`, `core-storage`, `feature-import`, `engine-api`, `engine-compat`, `cheats-core`, `cheats-gba`, `cheats-nds`, `cheats-script`.
 - **Android libraries:** `core-database`, `feature-library`, `feature-player`, `feature-cheats`, `feature-settings`, `engine-libretro`, `engine-mkxp`, `engine-renpy`, `engine-rpgmv`, `ui-theme-api`, `ui-theme-gba`, `ui-theme-nds`, `ui-theme-pc`.
+- **Import and delete UI (`feature-library`):** the activity registers `OpenDocument` and `OpenDocumentTree`; the picked URI goes to `ImportController`, which runs `AndroidImportRunner` off the main thread and exposes `ImportUiState` for `ImportDialogs`. A picked folder is read through `TreeSource` (listing is bounded by the same `ImportLimits` as other sources). Password and choice prompts block the import thread until the UI answers. Deleting renames the game folder to `.deleting-*` and then removes it, so a crash never leaves a half-deleted game that still looks valid; leftovers are swept at start-up with abandoned imports.
 - **`app`:** the composition root; depends on every module.
 - Public API of a module lives in its `api` package; everything else is `internal`.
 

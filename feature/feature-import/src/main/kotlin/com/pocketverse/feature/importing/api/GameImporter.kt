@@ -59,6 +59,20 @@ class GameImporter(
         }
     }
 
+    /**
+     * Imports from a source that is not a local file or folder (for example a Storage Access Framework tree or
+     * stream). Archives are not unpacked here: hand an archive to [import] as a [File].
+     */
+    fun importSource(
+        source: GameSource,
+        preferredRom: String? = null,
+        shouldCancel: () -> Boolean = { false },
+        onProgress: (ImportProgress) -> Unit = {},
+    ): ImportResult = importFrom(source, null, preferredRom, shouldCancel, onProgress)
+
+    /** True when [header] (the first bytes of a file) is an archive format [import] can open or must refuse. */
+    fun isArchive(header: ByteArray): Boolean = extractor.kindOf(header) != null
+
     private fun importFrom(
         source: GameSource,
         unpackedRoot: File?,

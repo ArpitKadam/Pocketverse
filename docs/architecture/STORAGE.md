@@ -75,7 +75,7 @@ Changes against the spec's section 7.1: two extra folders, `engine/` and `art/`.
 2. Every write of `meta.json` and `cheats.json` is **atomic**: write to a temporary file in the same folder, flush, rename over the target.
 3. `game/` is created at import and treated as read-only by engines; engines get `engine/` and `save/` as their writable areas.
 4. Import copies into a temporary sibling folder and renames it into place on success; a crash leaves no half-imported game (the temporary folder name starts with `.importing-` and is removed on the next start).
-5. Deleting a game offers: remove from the library only (folder kept, index entry dropped), or delete the folder with confirmation and an optional export of `save/` first.
+5. Deleting a game deletes its folder after a confirmation. "Remove from library only" was dropped: the index is rebuilt from the folders, so a kept folder would reappear on the next scan. Optional export of `save/` before deleting is still to do.
 6. Free-space check before an import (ROM size or archive uncompressed size plus a margin), with a clear message when short. JoiPlay needed over 3 GB and about 11 minutes for one game; progress and cancellation are required.
 7. All path-building goes through one `GameFolder` type; there are no string concatenations of paths elsewhere.
 

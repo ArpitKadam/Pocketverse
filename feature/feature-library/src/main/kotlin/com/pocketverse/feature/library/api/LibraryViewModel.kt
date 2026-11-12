@@ -3,14 +3,17 @@ package com.pocketverse.feature.library.api
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.pocketverse.core.database.api.GameEntry
 import com.pocketverse.core.database.api.LibraryIndex
 import com.pocketverse.core.storage.api.Library
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Keeps the index in line with the library folders and exposes what the screen shows.
@@ -47,6 +50,21 @@ class LibraryViewModel(
             } catch (e: Exception) {
                 _state.update { it.copy(loading = false, error = e.message ?: e::class.java.simpleName) }
             }
+        }
+    }
+
+    /** Deletes the game's folder (the user has confirmed) and refreshes the list. */
+    fun deleteGame(entry: GameEntry) {
+        viewModelScope.launch {
+            val problem = try {
+                val removed = withContext(Dispatchers.IO) { library.delete(entry.folderName) }
+                if (removed) null else "'${entry.title}' was already gone"
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                e.message ?: e::class.java.simpleName
+            }
+            if (problem == null) refresh() else _state.update { it.copy(error = problem) }
         }
     }
 
