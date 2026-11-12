@@ -50,17 +50,12 @@ class FolderGameImporter(
         if (files.any { ZipSource.normalise(it.path) != it.path }) {
             return ImportResult.Failed(ImportError.SourceUnreadable("the source contains file names that could escape the game folder"))
         }
+        // Cheapest checks first, and nothing is built that grows with an attacker-chosen number of entries
+        // before the count is known to be within the limit.
+        if (files.size > limits.maxEntries) return ImportResult.Failed(ImportError.LimitExceeded("more than ${limits.maxEntries} files"))
+        folderLimitError(files)?.let { return ImportResult.Failed(it) }
         val total = files.sumOf { it.size }
-        if (files.any { f -> f.path.length > MAX_PATH_LENGTH || f.path.split('/').let { it.size > MAX_DEPTH || it.any { n -> n.length > MAX_NAME_LENGTH } } }) {
-            return ImportResult.Failed(ImportError.LimitExceeded("a path is deeper than $MAX_DEPTH folders or has a name longer than $MAX_NAME_LENGTH characters"))
-        }
-        // Count the folders the copy would create too, not just the files: deep paths make many folders per file.
-        val folders = files.flatMapTo(HashSet()) { f -> f.path.split('/').dropLast(1).runningReduce { acc, part -> "$acc/$part" } }
-        if (files.size + folders.size > limits.maxEntries) {
-            return ImportResult.Failed(ImportError.LimitExceeded("more than ${limits.maxEntries} files and folders"))
-        }
         when {
-            files.size > limits.maxEntries -> return ImportResult.Failed(ImportError.LimitExceeded("more than ${limits.maxEntries} files"))
             files.any { it.size > limits.maxEntryBytes } -> return ImportResult.Failed(ImportError.LimitExceeded("a file is larger than ${limits.maxEntryBytes} bytes"))
             total > limits.maxTotalBytes -> return ImportResult.Failed(ImportError.LimitExceeded("more than ${limits.maxTotalBytes} bytes in total"))
         }
@@ -104,6 +99,32 @@ class FolderGameImporter(
             throw e
         }
     }
+
+    private class Folder {
+        val children = HashMap<String, Folder>()
+    }
+
+    /**
+     * Path shape and folder-count limits. Folders are counted in a tree of path segments, one node per distinct
+     * folder, so memory is bounded by the folders that are allowed, not by depth times files; counting stops at the limit.
+     */
+    private fun folderLimitError(files: List<SourceEntry>): ImportError? {
+        val root = Folder()
+        var folders = 0
+        for (f in files) {
+            if (f.path.length > MAX_PATH_LENGTH) return pathError()
+            val parts = f.path.split('/')
+            if (parts.size > MAX_DEPTH || parts.any { it.length > MAX_NAME_LENGTH }) return pathError()
+            var node = root
+            for (i in 0 until parts.size - 1) {
+                node = node.children.getOrPut(parts[i]) { folders++; Folder() }
+                if (files.size + folders > limits.maxEntries) return ImportError.LimitExceeded("more than ${limits.maxEntries} files and folders")
+            }
+        }
+        return null
+    }
+
+    private fun pathError() = ImportError.LimitExceeded("a path is deeper than $MAX_DEPTH folders or has a name longer than $MAX_NAME_LENGTH characters")
 
     private fun adopt(from: File, prefix: String, gameDir: File): ImportResult? {
         val root = if (prefix.isEmpty()) from else File(from, prefix.trimEnd('/'))
