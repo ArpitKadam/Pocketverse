@@ -2,7 +2,7 @@
 
 plugins {
     id("pocketverse.android-application")
-    alias(libs.plugins.kotlin.compose)
+    id("pocketverse.compose")
 }
 
 dependencies {

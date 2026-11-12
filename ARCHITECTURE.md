@@ -1,6 +1,6 @@
 # Architecture
 
-How Pocketverse is built **now**. Updated in place when structure changes. Why things are shaped this way: `docs/architecture/MODULE_MAP.md`, `docs/architecture/STORAGE.md`, `docs/research/re/SYNTHESIS.md`. Current state: Phase 1, skeleton (P1-2).
+How Pocketverse is built **now**. Updated in place when structure changes. Why things are shaped this way: `docs/architecture/MODULE_MAP.md`, `docs/architecture/STORAGE.md`, `docs/research/re/SYNTHESIS.md`. Current state: Phase 1, P1-3 done (models, hashing, per-game folder storage).
 
 ## Build
 
@@ -17,6 +17,13 @@ Layout is the revised tree in `CLAUDE.md` section 6: `app`, `core/*`, `feature/*
 - **Android libraries:** `core-database`, `feature-library`, `feature-player`, `feature-cheats`, `feature-settings`, `engine-libretro`, `engine-mkxp`, `engine-renpy`, `engine-rpgmv`, `ui-theme-api`, `ui-theme-gba`, `ui-theme-nds`, `ui-theme-pc`.
 - **`app`:** the composition root; depends on every module.
 - Public API of a module lives in its `api` package; everything else is `internal`.
+
+## What exists in code
+
+- **`core-model`:** `Platform`, `GameRecord` and its parts (`EngineRef`, `ContentHash`, `RomInfo`, `ImportInfo`, `UiPrefs`, `PlayStats`, typed `SettingValue`). `GameRecord.raw` carries the JSON it was read from so unknown keys survive a rewrite.
+- **`core-common`:** `Hashing` (SHA-256, CRC-32).
+- **`core-storage`:** `Library` (root, scan, transactional import: `beginImport` to a hidden `.importing-*` folder, then `commit` renames it into place, or `abort`), `GameFolder` (the only place that builds paths inside a game folder; atomic `meta.json` read/write), `FolderNames` (sanitising and naming rules), `MetaException`. `MetaJson` and `AtomicFiles` are internal.
+- Everything else is still an empty module with a README.
 
 ## Invariants (enforced by `./gradlew check`)
 

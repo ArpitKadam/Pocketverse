@@ -9,5 +9,7 @@ No emulator core, engine or game component is vendored yet. Entries are added wh
 | Kotlin (stdlib, Gradle plugin, Compose compiler plugin) | 2.4.21 | Apache-2.0 | https://github.com/JetBrains/kotlin | stdlib linked statically into the app | P1-2 |
 | AndroidX Compose (BOM, UI, Material 3) | BOM 2026.09.00 | Apache-2.0 | https://developer.android.com/jetpack/androidx | linked into the app | P1-2 |
 | AndroidX Activity Compose | 1.13.0 | Apache-2.0 | https://developer.android.com/jetpack/androidx | linked into the app | P1-2 |
+| kotlinx.serialization (JSON) | 1.13.0 | Apache-2.0 | https://github.com/Kotlin/kotlinx.serialization | linked into the app | P1-3 |
+| JUnit (BOM, Jupiter, Platform Launcher) | 6.1.3 | EPL-2.0 | https://junit.org | test only, not shipped | P1-3 |
 
 Candidate components under evaluation are in `docs/research/OPEN_SOURCE_ALTERNATIVES.md` and `COMPATIBILITY_MATRIX.md`.
