@@ -11,5 +11,11 @@ No emulator core, engine or game component is vendored yet. Entries are added wh
 | AndroidX Activity Compose | 1.13.0 | Apache-2.0 | https://developer.android.com/jetpack/androidx | linked into the app | P1-2 |
 | kotlinx.serialization (JSON) | 1.13.0 | Apache-2.0 | https://github.com/Kotlin/kotlinx.serialization | linked into the app | P1-3 |
 | JUnit (BOM, Jupiter, Platform Launcher) | 6.1.3 | EPL-2.0 | https://junit.org | test only, not shipped | P1-3 |
+| AndroidX Room (runtime, compiler) | 2.8.5 | Apache-2.0 | https://developer.android.com/jetpack/androidx/releases/room | linked into the app | P1-4 |
+| KSP (Kotlin Symbol Processing) | 2.3.13 | Apache-2.0 | https://github.com/google/ksp | build tool, not shipped | P1-4 |
+| kotlinx.coroutines | 1.11.0 | Apache-2.0 | https://github.com/Kotlin/kotlinx.coroutines | linked into the app | P1-4 |
+| Robolectric | 4.16.1 | MIT | https://github.com/robolectric/robolectric | test only, not shipped | P1-4 |
+| AndroidX Test Core | 1.7.0 | Apache-2.0 | https://developer.android.com/jetpack/androidx/releases/test | test only, not shipped | P1-4 |
+| JUnit 4 | 4.13.2 | EPL-1.0 | https://junit.org/junit4 | test only, not shipped | P1-4 |
 
 Candidate components under evaluation are in `docs/research/OPEN_SOURCE_ALTERNATIVES.md` and `COMPATIBILITY_MATRIX.md`.

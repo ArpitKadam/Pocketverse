@@ -52,7 +52,7 @@ class LibraryTest {
         GameFolder.SUBFOLDERS.forEach { assertTrue(File(game.root, it).isDirectory, it) }
         assertEquals("rom", File(game.game, "example.gba").readText())
         assertEquals("Example GBA Game", game.readMeta().title)
-        assertEquals(listOf(game.name), lib.scan().games.map { it.name })
+        assertEquals(listOf(game.name), lib.scan().games.map { it.folder.name })
     }
 
     @Test

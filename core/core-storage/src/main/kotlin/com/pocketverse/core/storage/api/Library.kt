@@ -15,7 +15,12 @@ class GameAlreadyInLibrary(val existing: GameFolder) : Exception("this game is a
 /** A folder in the library that could not be read as a game. */
 data class ScanProblem(val folderName: String, val reason: String)
 
-data class LibraryScan(val games: List<GameFolder>, val problems: List<ScanProblem>)
+/** A folder with a readable `meta.json`, and the record read from it. */
+data class ScannedGame(val folder: GameFolder, val record: GameRecord) {
+    val name: String get() = folder.name
+}
+
+data class LibraryScan(val games: List<ScannedGame>, val problems: List<ScanProblem>)
 
 /**
  * The library root and everything directly under it (`docs/architecture/STORAGE.md`). The root is chosen by
@@ -49,14 +54,13 @@ class Library(val root: File) {
 
     /** Games found under the root, plus the folders that could not be read (never throws for a bad folder). */
     fun scan(): LibraryScan {
-        val games = mutableListOf<GameFolder>()
+        val games = mutableListOf<ScannedGame>()
         val problems = mutableListOf<ScanProblem>()
         val dirs = root.listFiles { f -> f.isDirectory && !f.name.startsWith(".") }.orEmpty().sortedBy { it.name.lowercase() }
         for (dir in dirs) {
             val folder = GameFolder(dir)
             try {
-                folder.readMeta()
-                games += folder
+                games += ScannedGame(folder, folder.readMeta())
             } catch (e: MetaException) {
                 problems += ScanProblem(dir.name, e.message ?: "unreadable meta.json")
             }
@@ -73,7 +77,7 @@ class Library(val root: File) {
 
     // ponytail: rescans every meta.json per import (O(n) reads); switch to the core-database index when libraries get large
     private fun findByHash(record: GameRecord): GameFolder? =
-        scan().games.firstOrNull { runCatching { it.readMeta().hash.sha256 }.getOrNull() == record.hash.sha256 }
+        scan().games.firstOrNull { it.record.hash.sha256 == record.hash.sha256 }?.folder
 
     /** Moves the finished temporary folder into place under its final name; extends the id if the name is taken. */
     internal fun commit(pending: GameFolder, record: GameRecord): GameFolder {
