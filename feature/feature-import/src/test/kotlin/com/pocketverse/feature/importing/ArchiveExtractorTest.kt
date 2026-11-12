@@ -138,6 +138,17 @@ class ArchiveExtractorTest {
     }
 
     @Test
+    fun `deep paths are counted by the folders they create, not by their entry count`() {
+        // Five files, but each sits under its own 60-level chain: about 300 folders in total.
+        val chains = (1..5).associate { i -> "r$i/" + (1..60).joinToString("/") { "d" } + "/f.txt" to ByteArray(1) }
+        val tar = ArchiveFixtures.tar(File(tmp, "deep.tar"), chains)
+        val r = extract(tar, ImportLimits(maxEntries = 100)) as ExtractResult.Failed
+        assertTrue(r.error is ImportError.LimitExceeded)
+        val created = out.walkTopDown().count { it != out }
+        assertTrue(created <= 100, "created $created entries, limit 100")
+    }
+
+    @Test
     fun `absurdly deep or long names are skipped like escape attempts`() {
         val deep = (1..70).joinToString("/") { "d" } + "/x.txt"
         val long = "n".repeat(300) + ".txt"

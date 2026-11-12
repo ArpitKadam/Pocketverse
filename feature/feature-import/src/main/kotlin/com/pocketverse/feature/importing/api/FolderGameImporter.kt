@@ -51,6 +51,14 @@ class FolderGameImporter(
             return ImportResult.Failed(ImportError.SourceUnreadable("the source contains file names that could escape the game folder"))
         }
         val total = files.sumOf { it.size }
+        if (files.any { f -> f.path.length > MAX_PATH_LENGTH || f.path.split('/').let { it.size > MAX_DEPTH || it.any { n -> n.length > MAX_NAME_LENGTH } } }) {
+            return ImportResult.Failed(ImportError.LimitExceeded("a path is deeper than $MAX_DEPTH folders or has a name longer than $MAX_NAME_LENGTH characters"))
+        }
+        // Count the folders the copy would create too, not just the files: deep paths make many folders per file.
+        val folders = files.flatMapTo(HashSet()) { f -> f.path.split('/').dropLast(1).runningReduce { acc, part -> "$acc/$part" } }
+        if (files.size + folders.size > limits.maxEntries) {
+            return ImportResult.Failed(ImportError.LimitExceeded("more than ${limits.maxEntries} files and folders"))
+        }
         when {
             files.size > limits.maxEntries -> return ImportResult.Failed(ImportError.LimitExceeded("more than ${limits.maxEntries} files"))
             files.any { it.size > limits.maxEntryBytes } -> return ImportResult.Failed(ImportError.LimitExceeded("a file is larger than ${limits.maxEntryBytes} bytes"))
@@ -165,6 +173,9 @@ class FolderGameImporter(
         const val CHUNK = 64 * 1024
         const val PROGRESS_STEP = 1024 * 1024L
         const val MIN_MARGIN = 64L * 1024 * 1024
+        const val MAX_DEPTH = 64
+        const val MAX_NAME_LENGTH = 255
+        const val MAX_PATH_LENGTH = 4096
 
         fun isJunk(path: String): Boolean =
             path.substringBefore('/').equals("__MACOSX", ignoreCase = true) ||

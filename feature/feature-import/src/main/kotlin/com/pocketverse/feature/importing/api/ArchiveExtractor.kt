@@ -169,6 +169,9 @@ class ArchiveExtractor(
         private val targetPath = target.canonicalPath + File.separator
         private var files = 0
         private var entries = 0
+
+        /** Files plus folders actually created: what the file table pays for, whatever the entry count says. */
+        private var inodes = 0
         private var written = 0L
         private var skipped = 0
 
@@ -192,11 +195,9 @@ class ArchiveExtractor(
             }
             // Every entry counts, folders too: millions of empty folders exhaust the file table as surely as files.
             if (++entries > limits.maxEntries) return fail(ImportError.LimitExceeded("more than ${limits.maxEntries} entries"))
-            if (isDirectory) {
-                dest.mkdirs()
-                return null
-            }
+            if (isDirectory) return if (reserveFolders(dest)) null else fail(ImportError.LimitExceeded("more than ${limits.maxEntries} files and folders"))
             files++
+            if (++inodes > limits.maxEntries) return fail(ImportError.LimitExceeded("more than ${limits.maxEntries} files and folders"))
             if (declared > limits.maxEntryBytes) return fail(ImportError.LimitExceeded("'$name' is larger than ${limits.maxEntryBytes} bytes"))
             val cap = if (declared >= 0) declared else limits.maxEntryBytes
             if (written + cap > limits.maxTotalBytes) return fail(ImportError.LimitExceeded("more than ${limits.maxTotalBytes} bytes in total"))
@@ -204,7 +205,7 @@ class ArchiveExtractor(
             val free = availableBytes(target)
             if (free < cap + margin) return fail(ImportError.InsufficientSpace(cap + margin, free))
 
-            dest.parentFile?.mkdirs()
+            if (dest.parentFile != null && !reserveFolders(dest.parentFile)) return fail(ImportError.LimitExceeded("more than ${limits.maxEntries} files and folders"))
             var n = 0L
             try {
                 val input = open()
@@ -233,6 +234,20 @@ class ArchiveExtractor(
             if (declared >= 0 && n != declared) return fail(ImportError.SourceChanged(declared, n))
             report()
             return null
+        }
+
+        /** Creates [dir] and any missing parents, but only if the folders it would add stay under the limit. */
+        private fun reserveFolders(dir: File): Boolean {
+            var missing = 0
+            var d: File? = dir
+            while (d != null && !d.exists()) {
+                missing++
+                d = d.parentFile
+            }
+            if (inodes + missing > limits.maxEntries) return false
+            dir.mkdirs()
+            inodes += missing
+            return true
         }
 
         fun done(): ExtractResult {

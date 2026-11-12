@@ -122,6 +122,19 @@ class FolderImportTest {
     }
 
     @Test
+    fun `a tree of deep paths is refused by the folders it would create`() {
+        val files = (1..5).associate { i -> "r$i/" + (1..60).joinToString("/") { "d" } + "/f.txt" to ByteArray(1) } + mapOf("Game.ini" to ByteArray(1), "Data/a.rxdata" to ByteArray(1))
+        val src = MemorySource("deep", files)
+        val d = Detection.FolderGame(Platform.RPGMAKER, com.pocketverse.core.model.api.EngineRef("mkxp-z"), "", "Game.ini", "deep")
+        val r = importer(limits = ImportLimits(maxEntries = 100)).import(src, d) as ImportResult.Failed
+        assertTrue(r.error is ImportError.LimitExceeded)
+        assertEquals(0, leftovers())
+        // a path deeper than the depth cap is refused outright
+        val tooDeep = MemorySource("x", "Game.ini" to ByteArray(1), "Data/a.rxdata" to ByteArray(1), (1..70).joinToString("/") { "d" } + "/f" to ByteArray(1))
+        assertTrue((importer().import(tooDeep, d) as ImportResult.Failed).error is ImportError.LimitExceeded)
+    }
+
+    @Test
     fun `a name that would escape the game folder is refused`() {
         val src = MemorySource("x", "Game.ini" to ByteArray(1), "Data/a.rxdata" to ByteArray(1), "../outside.txt" to ByteArray(1))
         val d = Detection.FolderGame(Platform.RPGMAKER, com.pocketverse.core.model.api.EngineRef("mkxp-z"), "", "Game.ini", "x")

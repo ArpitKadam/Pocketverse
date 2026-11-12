@@ -51,6 +51,7 @@ object ArchiveFixtures {
     fun tar(file: File, files: Map<String, ByteArray>, gzip: Boolean = false): File {
         val raw = file.outputStream()
         TarArchiveOutputStream(if (gzip) GZIPOutputStream(raw) else raw).use { t ->
+            t.setLongFileMode(TarArchiveOutputStream.LONGFILE_POSIX)
             files.forEach { (name, bytes) ->
                 t.putArchiveEntry(TarArchiveEntry(name).also { it.size = bytes.size.toLong() })
                 t.write(bytes)
