@@ -52,6 +52,17 @@ class Library(val root: File) {
         return PendingGame(this, GameFolder(tmp), record)
     }
 
+    /**
+     * A hidden scratch folder inside the library, on the same filesystem as the final game folders so a finished
+     * file can be moved into place with a rename. The caller deletes it; [cleanupAbandonedImports] removes it
+     * if the app died first.
+     */
+    fun createStagingDir(): File {
+        val dir = File(root, "$IMPORTING_PREFIX${UUID.randomUUID()}")
+        if (!dir.mkdir()) throw IOException("cannot create ${dir.path}")
+        return dir
+    }
+
     /** Games found under the root, plus the folders that could not be read (never throws for a bad folder). */
     fun scan(): LibraryScan {
         val games = mutableListOf<ScannedGame>()

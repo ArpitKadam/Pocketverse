@@ -108,6 +108,18 @@ class LibraryTest {
     }
 
     @Test
+    fun `a staging dir is hidden, inside the library, and removed by cleanup`() {
+        val lib = Library(tmp)
+        val staging = lib.createStagingDir()
+        assertTrue(staging.isDirectory)
+        assertEquals(tmp.canonicalFile, staging.parentFile.canonicalFile)
+        assertTrue(staging.name.startsWith(Library.IMPORTING_PREFIX))
+        assertTrue(lib.scan().games.isEmpty())
+        assertEquals(1, lib.cleanupAbandonedImports())
+        assertFalse(staging.exists())
+    }
+
+    @Test
     fun `writeMeta replaces the file atomically and leaves no temp file`() {
         val lib = Library(tmp)
         val game = lib.beginImport(record()).commit()

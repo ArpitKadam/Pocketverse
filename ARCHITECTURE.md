@@ -1,6 +1,6 @@
 # Architecture
 
-How Pocketverse is built **now**. Updated in place when structure changes. Why things are shaped this way: `docs/architecture/MODULE_MAP.md`, `docs/architecture/STORAGE.md`, `docs/research/re/SYNTHESIS.md`. Current state: Phase 2, P2-1 done (format detection).
+How Pocketverse is built **now**. Updated in place when structure changes. Why things are shaped this way: `docs/architecture/MODULE_MAP.md`, `docs/architecture/STORAGE.md`, `docs/research/re/SYNTHESIS.md`. Current state: Phase 2, P2-2 done (cartridge import).
 
 ## Build
 
@@ -28,6 +28,7 @@ Layout is the revised tree in `CLAUDE.md` section 6: `app`, `core/*`, `feature/*
 - **`feature-library`:** `LibraryScreen` (stateless Compose), `LibraryViewModel`, `LibraryUiState`. The screen shows loading, error, an empty-state, or the game list, plus a note when folders could not be read. No theme yet.
 - **`app`:** `PocketverseApp` builds the `Library` (`getExternalFilesDir(null)/Pocketverse`) and the `LibraryIndex` by hand (no DI framework yet); `MainActivity` hosts `LibraryScreen` through the view model; `DebugImportStub` exists only to put a test game in debuggable builds until `feature-import` exists.
 - **`feature-import`:** `GameSource` abstraction and `FormatDetector` (pure, content-based). Cartridge headers are parsed per the public GBATEK layout; header problems that real ROM hacks have (wrong GBA checksum, wrong NDS CRC) are warnings, not rejections. Folder games are recognised by engine files, and a Windows `.exe` is never an engine marker. Verified against the owner's real GBA and NDS ROMs (local, gitignored) and synthetic fixtures.
+- **Cartridge import (`feature-import`):** `CartridgeImporter.import(source, detection)` checks free space (size plus margin), copies the ROM once into a hidden staging folder while computing SHA-256 and CRC-32, then calls `Library.beginImport` (which refuses duplicates) and moves the file into `game/`, writes `meta.json` and commits with one rename. Cancellation is polled per 64 KiB chunk; every failure path removes the staging folder. `ZipSource` lets a zip with a ROM go through the same path.
 - Everything else is still an empty module with a README.
 
 ## Invariants (enforced by `./gradlew check`)

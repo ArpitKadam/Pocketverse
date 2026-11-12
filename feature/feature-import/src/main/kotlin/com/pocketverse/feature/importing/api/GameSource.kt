@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 package com.pocketverse.feature.importing.api
 
+import com.pocketverse.core.model.api.SourceKind
 import java.io.File
 import java.io.InputStream
 
@@ -15,6 +16,9 @@ interface GameSource {
     /** The name the user knows it by (file or folder name). */
     val displayName: String
 
+    /** What the user picked; stored in `meta.json` as `import.sourceKind`. */
+    val kind: SourceKind get() = SourceKind.FILE
+
     /** Every regular file, relative paths. A single-file source has exactly one entry. */
     fun entries(): List<SourceEntry>
 
@@ -25,6 +29,8 @@ interface GameSource {
 /** A file or a folder on the local filesystem. */
 class FileSystemSource(private val root: File) : GameSource {
     override val displayName: String get() = root.name
+
+    override val kind: SourceKind get() = if (root.isDirectory) SourceKind.FOLDER else SourceKind.FILE
 
     override fun entries(): List<SourceEntry> =
         if (root.isFile) {

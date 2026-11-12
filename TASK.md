@@ -51,8 +51,8 @@ Do not start P1-n+1 before "Go for P1-n+1".
 
 | # | Task | Status |
 | --- | --- | --- |
-| P2-1 | `feature-import`: `GameSource` abstraction and pure content-based `FormatDetector` (GBA, NDS headers; RPG Maker XP/VX/Ace, MV/MZ, Ren'Py folders; explicit rejection reasons), synthetic fixtures, checked against the owner's real files | done, awaiting review |
-| P2-2 | Cartridge import pipeline: hash, copy into `game/`, `meta.json`, free-space check, progress and cancellation; zip with one ROM | todo |
+| P2-1 | `feature-import`: `GameSource` abstraction and pure content-based `FormatDetector` (GBA, NDS headers; RPG Maker XP/VX/Ace, MV/MZ, Ren'Py folders; explicit rejection reasons), synthetic fixtures, checked against the owner's real files | done, committed |
+| P2-2 | Cartridge import pipeline: hash, copy into `game/`, `meta.json`, free-space check, progress and cancellation; zip with one ROM | done, awaiting review |
 | P2-3 | Folder and archive import: manifest hash, tree copy, zip/7z unpack with password prompt hook, wrapper-folder handling | todo |
 | P2-4 | App integration: pick file or folder (Storage Access Framework), import UI with progress and rejection reasons, delete-game flow | todo |
 
