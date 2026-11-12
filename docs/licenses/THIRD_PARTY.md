@@ -17,5 +17,8 @@ No emulator core, engine or game component is vendored yet. Entries are added wh
 | Robolectric | 4.16.1 | MIT | https://github.com/robolectric/robolectric | test only, not shipped | P1-4 |
 | AndroidX Test Core | 1.7.0 | Apache-2.0 | https://developer.android.com/jetpack/androidx/releases/test | test only, not shipped | P1-4 |
 | JUnit 4 | 4.13.2 | EPL-1.0 | https://junit.org/junit4 | test only, not shipped | P1-4 |
+| AndroidX Lifecycle (ViewModel, runtime-compose) | 2.11.0 | Apache-2.0 | https://developer.android.com/jetpack/androidx/releases/lifecycle | linked into the app | P1-5 |
+| AndroidX Compose Foundation | BOM 2026.09.00 | Apache-2.0 | https://developer.android.com/jetpack/androidx | linked into the app | P1-5 |
+| AndroidX Compose UI Test (junit4, manifest), kotlinx-coroutines-test, AndroidX Test (ext-junit, runner) | BOM 2026.09.00; 1.11.0; 1.3.0, 1.7.0 | Apache-2.0 | https://developer.android.com/jetpack/androidx | test only, not shipped | P1-5 |
 
 Candidate components under evaluation are in `docs/research/OPEN_SOURCE_ALTERNATIVES.md` and `COMPATIBILITY_MATRIX.md`.

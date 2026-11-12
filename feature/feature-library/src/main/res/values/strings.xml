@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="library_empty_title">No games yet</string>
+    <string name="library_empty_hint">Import a game to get started.</string>
+    <string name="library_add_test_game">Add test game</string>
+    <string name="library_error_title">The library is not available</string>
+
+    <plurals name="library_unreadable_folders">
+        <item quantity="one">%d folder could not be read</item>
+        <item quantity="other">%d folders could not be read</item>
+    </plurals>
+    <plurals name="library_minutes_played">
+        <item quantity="one">%d minute played</item>
+        <item quantity="other">%d minutes played</item>
+    </plurals>
+
+    <string name="platform_gba">GBA</string>
+    <string name="platform_nds">NDS</string>
+    <string name="platform_rpgmaker">RPG Maker</string>
+    <string name="platform_renpy">Ren\'Py</string>
+    <string name="platform_rpgmaker_mv">RPG Maker MV/MZ</string>
+</resources>

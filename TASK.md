@@ -42,7 +42,7 @@ Do not start Phase 1 until the Phase 0 exit checklist (CLAUDE.md §5.3) is revie
 | P1-1 | `docs/architecture/STORAGE.md` decision, `meta.json` v1 schema, folder layout spec | done, committed |
 | P1-2 | Gradle multi-module skeleton (all modules from CLAUDE.md section 6, empty with READMEs), version catalog, builds, `ARCHITECTURE.md`, SPDX header check | done, committed |
 | P1-3 | `core-model`, `core-common`, `core-storage`: `GameFolder` API, folder creation, `meta.json` read/write, unit tests | done, committed |
-| P1-4 | `core-database`: Room library index, rebuild from folders, tests | done, awaiting review |
-| P1-5 | `feature-library` + `app` wiring: empty library screen, folder layout created on import stub, instrumented test | todo |
+| P1-4 | `core-database`: Room library index, rebuild from folders, tests | done, committed |
+| P1-5 | `feature-library` + `app` wiring: empty library screen, folder layout created on import stub, instrumented test | done, awaiting review |
 
 Do not start P1-n+1 before "Go for P1-n+1".

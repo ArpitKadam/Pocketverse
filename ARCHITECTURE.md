@@ -1,6 +1,6 @@
 # Architecture
 
-How Pocketverse is built **now**. Updated in place when structure changes. Why things are shaped this way: `docs/architecture/MODULE_MAP.md`, `docs/architecture/STORAGE.md`, `docs/research/re/SYNTHESIS.md`. Current state: Phase 1, P1-4 done (library index).
+How Pocketverse is built **now**. Updated in place when structure changes. Why things are shaped this way: `docs/architecture/MODULE_MAP.md`, `docs/architecture/STORAGE.md`, `docs/research/re/SYNTHESIS.md`. Current state: Phase 1, P1-5 done (library screen, app wiring).
 
 ## Build
 
@@ -25,6 +25,8 @@ Layout is the revised tree in `CLAUDE.md` section 6: `app`, `core/*`, `feature/*
 - **`core-common`:** `Hashing` (SHA-256, CRC-32).
 - **`core-storage`:** `Library` (root, scan, transactional import: `beginImport` to a hidden `.importing-*` folder, then `commit` renames it into place, or `abort`), `GameFolder` (the only place that builds paths inside a game folder; atomic `meta.json` read/write), `FolderNames` (sanitising and naming rules), `MetaException`. `MetaJson` and `AtomicFiles` are internal.
 - **`core-database`:** `LibraryIndex` over one Room table. `meta.json` is the source of truth; the table only lets the library be listed, sorted and searched without opening every folder. `sync(library)` reuses `Library.scan()` and updates only rows whose `meta.json` changed; a stale schema is dropped and rebuilt (`fallbackToDestructiveMigration`), which is safe because nothing in it is not in a folder. Play statistics are written to `meta.json` first, then the row.
+- **`feature-library`:** `LibraryScreen` (stateless Compose), `LibraryViewModel`, `LibraryUiState`. The screen shows loading, error, an empty-state, or the game list, plus a note when folders could not be read. No theme yet.
+- **`app`:** `PocketverseApp` builds the `Library` (`getExternalFilesDir(null)/Pocketverse`) and the `LibraryIndex` by hand (no DI framework yet); `MainActivity` hosts `LibraryScreen` through the view model; `DebugImportStub` exists only to put a test game in debuggable builds until `feature-import` exists.
 - Everything else is still an empty module with a README.
 
 ## Invariants (enforced by `./gradlew check`)

@@ -5,4 +5,4 @@ The thin shell: navigation, dependency injection, theme host, and the activity a
 - **Application id:** `com.pocketverse.app` (placeholder until the name check in `CLAUDE.md` is done).
 - **ABI:** arm64-v8a only for now (spec section 3).
 - **Depends on:** every module (it is the composition root).
-- **Status:** skeleton (P1-2): one activity that shows the app name.
+- **Status:** P1-5: `PocketverseApp` wires the library (app-specific external directory, `Pocketverse/`) and the index by hand; `MainActivity` shows the library screen; `DebugImportStub` adds a fake test game in debuggable builds only, through the same transactional path the real import will use. One instrumented test (`androidTest`) covers the real storage location; it compiles but has not been run on a device.
